@@ -1,12 +1,14 @@
 import os
 import time
-import mutagen
+import uuid
+import contextlib
 
 from TextToSpeech.TTSInterface import TTSInterface
-from datetime import date
 from gtts import gTTS
 from gtts.tokenizer.pre_processors import abbreviations, end_of_line
-from pygame import mixer
+with contextlib.redirect_stdout(None):
+    from pygame import mixer
+
 from mutagen.mp3 import MP3
 
 class GTTS(TTSInterface):
@@ -21,21 +23,23 @@ class GTTS(TTSInterface):
         
         self.audio = tts_audio
 
-        ct = f'{date.today()}.mp3'
+        ct = f'{uuid.uuid4()}.mp3'
         tts_audio.save(ct)
 
-        mixer.init()
-        mixer.music.load(ct)
-        mixer.music.play()
-
-        # Wait for the audio to be played
-        # This should be done in a seperate thread
-        time.sleep(MP3(ct).info.length)
-
-        mixer.quit()
-
+        self.play_audio(ct)
+        
         os.remove(ct)
 
     def save_tts(self):
         # Should prob open file explorer to select a destination instead.
-        self.audio.save(f'{date.today()}.mp3')
+        self.audio.save(f'{uuid.uuid4()}.mp3')
+    
+    def play_audio(self, file_path):
+        mixer.init()
+        mixer.music.load(file_path)
+        mixer.music.play()
+
+        # Wait for the audio to be played
+        time.sleep(MP3(file_path).info.length)
+
+        mixer.quit()

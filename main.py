@@ -1,3 +1,5 @@
+import multiprocessing
+
 from Generator.generatorInterface import GeneratorInterface
 from Generator.GPTNeoGenerator import GPTNeoGenerator
 from TextToSpeech.TTSInterface import TTSInterface
@@ -18,7 +20,8 @@ class Main:
             
             generated_text = self.generator.get_generated_text(prompt)
             print(f'Ai: {generated_text}')
-            self.tts.get_tts_audio(generated_text)
+            p = multiprocessing.Process(target=self.tts.get_tts_audio, args=(generated_text,))
+            p.start()
 
 if __name__ == "__main__":
     generator = GPTNeoGenerator()
