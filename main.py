@@ -1,9 +1,12 @@
+import os
 import multiprocessing
 
 from Generator.generatorInterface import GeneratorInterface
 from Generator.GPTNeoGenerator import GPTNeoGenerator
+from Generator.GPTChatAPI import OpenaiApi
 from TextToSpeech.TTSInterface import TTSInterface
 from TextToSpeech.gTTS import GTTS
+from TextToSpeech.pyttsx3TTS import Pyttsx3TTS
 
 class Main:
     def __init__(self, generator: GeneratorInterface, tts: TTSInterface):
@@ -24,8 +27,10 @@ class Main:
             p.start()
 
 if __name__ == "__main__":
-    generator = GPTNeoGenerator()
-    tts = GTTS()
+    #generator = GPTNeoGenerator()
+    generator = OpenaiApi()
+    #tts = GTTS()
+    tts = Pyttsx3TTS()
 
     main = Main(generator, tts)
     main.main()

@@ -18,7 +18,7 @@ class GTTS(TTSInterface):
         self.audio = None
 
     def get_tts_audio(self, text):
-        # slow=False tells the module that the converted audio should have a high speed
+        # slow=False. Tells the module that the converted audio should have a high speed
         tts_audio = gTTS(text, lang=self.language, slow=self.speed, pre_processor_funcs = [abbreviations, end_of_line])
         
         self.audio = tts_audio

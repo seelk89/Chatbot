@@ -153,3 +153,6 @@ cython_debug/
 
 # Conda env ignore
 .conda
+
+# Ignore environment json
+env.json
