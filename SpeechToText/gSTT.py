@@ -3,7 +3,7 @@ import logging
 
 from SpeechToText.STTInterface import STTInterface
 
-class GoogleAPISTT(STTInterface):
+class GSTT(STTInterface):
     # A speech-to-text implementation that uses the Google Speech Recognition API.
     def __init__(self):
         # Initializes the recognizer object.

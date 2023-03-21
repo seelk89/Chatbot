@@ -8,7 +8,7 @@ from TextToSpeech.TTSInterface import TTSInterface
 from TextToSpeech.gTTS import GTTS
 from TextToSpeech.pyttsx3TTS import Pyttsx3TTS
 from SpeechToText.STTInterface import STTInterface
-from SpeechToText.GoogleApi import GoogleAPISTT
+from SpeechToText.gSTT import GSTT
 
 
 class ConversationManager:
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     generator = OpenaiApiGPT3Turbo()
     #tts = GTTS()
     tts = Pyttsx3TTS()
-    stt = GoogleAPISTT()
+    stt = GSTT()
 
     # Create a conversation manager and start the conversation
     conversation_manager = ConversationManager(generator, tts, stt)
