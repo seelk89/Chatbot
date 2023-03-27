@@ -156,3 +156,10 @@ cython_debug/
 
 # Ignore environment json
 env.json
+
+# Ignore the models (because they are huge)
+models/
+
+AudioClips/
+
+Transcribtions/

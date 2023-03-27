@@ -1,6 +1,5 @@
-import keyboard
-
-# Import modules from the same package
+from typing import Optional
+from Util.triggerDecorators import TriggerDecorators
 from Generator.generatorInterface import GeneratorInterface
 from Generator.GPTNeoGenerator import GPTNeoGenerator
 from Generator.GPTChatAPI import OpenaiApiDavinci, OpenaiApiGPT3Turbo
@@ -9,12 +8,12 @@ from TextToSpeech.gTTS import GTTS
 from TextToSpeech.pyttsx3TTS import Pyttsx3TTS
 from SpeechToText.STTInterface import STTInterface
 from SpeechToText.gSTT import GSTT
+from SpeechToText.whisperSTT import WhisperSTT
 
 
 class ConversationManager:
-    # Manages a conversation between a user and an AI
-
-    def __init__(self, generator: GeneratorInterface, tts: TTSInterface, stt: STTInterface = None):
+    # Manages a conversation between a user and the AI
+    def __init__(self, generator: GeneratorInterface, tts: TTSInterface, stt: Optional[STTInterface] = None, decorator = None):
         # :param generator: an object that generates AI responses
         # :param tts: an object that generates TTS audio
         # :param stt: an object that transcribes speech to text
@@ -22,6 +21,7 @@ class ConversationManager:
         self.generator = generator
         self.tts = tts
         self.stt = stt
+        self.decorator = decorator
 
     def start_conversation(self):
         # Starts a conversation between a user and an AI
@@ -34,12 +34,14 @@ class ConversationManager:
                 # For handling input from the terminal, as opposed to STT
                 prompt = str(input('User: '))
 
-            # End the conversation if the user presses 'q'
-            if self.stt is None and prompt.lower() == 'q':
-                break
+            if self.stt is not None:
+                # Decorate the trigger function for STT with a specific trigger i.e. on key press or detected phrase
+                stt_trigger = self.decorator(self.stt.get_stt_text)
+                prompt = stt_trigger()
 
-            if keyboard.is_pressed('ctrl'):
-                prompt = self.stt.get_stt_text()
+            # End the conversation if asked to
+            if prompt is not None and prompt.lower() == 'quit' or prompt is not None and prompt.lower() == 'q':
+                break
 
             if prompt is not None:
                 generated_text = self.generator.get_generated_text(prompt)
@@ -52,24 +54,24 @@ class ConversationManager:
         # Generates TTS audio and plays it
         try:
             # Generate TTS audio
-            audio = self.tts.get_tts_audio(text)
+            self.tts.get_tts_audio(text)
 
-            # Play TTS audio
-            audio.play()
         except Exception as e:
             # Handle TTS audio generation or playback errors
             print(f'Error playing audio: {str(e)}')
 
-
 if __name__ == '__main__':
+    decorators = TriggerDecorators()
+
     # Initialize objects for the AI generator, TTS engine, and STT engine
     #generator = GPTNeoGenerator()
     #generator = OpenaiApiDavinci()
     generator = OpenaiApiGPT3Turbo()
     #tts = GTTS()
     tts = Pyttsx3TTS()
-    stt = GSTT()
+    #stt = GSTT()
+    stt = WhisperSTT()
 
     # Create a conversation manager and start the conversation
-    conversation_manager = ConversationManager(generator, tts, stt)
+    conversation_manager = ConversationManager(generator, tts, stt, decorator=decorators.key_press(['ctrl', 'alt']))
     conversation_manager.start_conversation()

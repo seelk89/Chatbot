@@ -23,11 +23,10 @@ class GPTNeoGenerator(GeneratorInterface):
                 self.model_name = 'EleutherAI/gpt-neo-2.7B'
             elif free_vram > 7:
                 self.use_cuda = True
-                self.model.to('cuda:0')
 
         # Load the model
-        self.model = GPTNeoForCausalLM.from_pretrained(self.model_name)
-        self.tokenizer = GPT2Tokenizer.from_pretrained(self.model_name)
+        self.model = GPTNeoForCausalLM.from_pretrained(self.model_name, cache_dir='./Models')
+        self.tokenizer = GPT2Tokenizer.from_pretrained(self.model_name, cache_dir='./Models')
 
         # Move the model to the GPU if available
         if self.use_cuda:
